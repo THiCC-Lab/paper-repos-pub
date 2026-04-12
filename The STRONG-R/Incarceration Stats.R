@@ -1,5 +1,5 @@
 # Author: Deja Workman @ Penn State
-# Date: 4/2/2026
+# Date: 4/12/2026
 # Description: This is code for the paper "The STRONG-R and the Carceral Algorithmic Constitution of Anti-Blackness".
 
 # Set Working Directory
