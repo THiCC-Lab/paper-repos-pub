@@ -1,7 +1,6 @@
 # Author: Deja Workman @ Penn State
 # Date: 4/2/2026
-# Description: This is code for the paper "How Carceral Algorithms Distort 
-# Black Narratives: The STRONG-R Case Study".
+# Description: This is code for the paper "The STRONG-R and the Carceral Algorithmic Constitution of Anti-Blackness".
 
 # Set Working Directory
 #setwd("C://Users//Student//Desktop//Carceral Algorithms")
