@@ -1,0 +1,11 @@
+path: 
+train: images
+val: images
+
+names:
+  0: article
+  1: headline
+  2: subheading
+  3: advertisement
+
+cache: False

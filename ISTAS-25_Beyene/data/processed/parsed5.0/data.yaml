@@ -1,0 +1,10 @@
+train: /mnt/c/Users/fsb5110/olmocr/Untitled Folder/pipeline1/data/processed/parsed5.0/train/images
+val: /mnt/c/Users/fsb5110/olmocr/Untitled Folder/pipeline1/data/processed/parsed5.0/val/images
+
+names:
+  0: advertisement
+  1: article
+  2: headline
+  3: subheading
+
+cache: False
