@@ -62,8 +62,7 @@
   filename)
 
 ; do-experiment takes human true model false. It runs 5 blocks
-; collecting the correctness and timing data per block, and then returns a list with lists where each sublist
-; represents a block with the first item being % correct and the second mean response time.
+; collecting the correctness and timing data per block, and then returns a list 
 (defun do-experiment (human)
 
   (if (and human (not (visible-virtuals-available?)))

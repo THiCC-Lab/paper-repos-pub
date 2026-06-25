@@ -1,7 +1,8 @@
 (clear-all)
 
 (define-model iatmodel
- 
+    
+(sgp :seed (200 4))
 (sgp :v t :esc t :lf 0.2 :ncnar nil)
 (chunk-type goal state block probe)
 (chunk-type pair probe answer)
@@ -57,7 +58,7 @@
       state    attending-probe
 )
 
-(p read-probe-block4 "switching from vcongruent to incongruent"
+(p read-probe-block4 "switching from congruent to incongruent"
     =goal>
       isa      goal
       state    attending-probe
