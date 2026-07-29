@@ -317,6 +317,11 @@ class HDM():
         self.lf = 1                  # value of :lf parameter
         self.esc = False             # is the :esc parameter set
 
+        # adding some act-r params
+        self.ans = 0.0
+        self.rt = 0.0
+        self.bll = 0.0
+
         # Initializing various other parameters used for HDM retrieval.
         self.adaptors=[]
         self.latency=latency
@@ -788,6 +793,8 @@ class HDM():
                 print('output chunk = ' + str(chunk))
             # chunkObj = Chunk(chunk)
             # chunkObj.activation = highestCosine
+            chunk.activation = highestCosine
+            print('with a cosine of ' + str(highestCosine))
             self.finst.add(bestMatch)
             return chunk
             # self.recall(chunkObj,matches=[],request_number=self._request_count)
@@ -1028,9 +1035,20 @@ def request (name,buffer,spec):
      
     if match:
         #  put constructed chunk into ACT-R retrieval buffer if match found
+        if hasattr(match, "activation"):
+            logodds = module.cosine_to_logodds(match.activation)
+        else:
+            logodds = module.cosine_to_logodds(module.threshold)
+        time=module.latency * math.exp(-logodds)
+        if time>module.maximum_time: 
+            time=module.maximum_time 
         module.pending = actr.schedule_event_relative(time,"retrieved-chunk",match.to_flat_list(),"declarative",destination="declarative",output="medium")
     else:
-        # otherwise trigger ACT-R retrieval failure
+		# otherwise trigger ACT-R retrieval failure
+        logodds = module.cosine_to_logodds(module.threshold)
+        time=module.latency * math.exp(-logodds)
+        if time>module.maximum_time: 
+            time=module.maximum_time 
         module.pending = actr.schedule_event_relative(time,"retrieval-failure",None,"declarative",destination="declarative",output="medium")
 
     # should always free the chunk-spec resources when no longer needed
@@ -1087,6 +1105,9 @@ def params (name, argsl):
     # TODO: maybe LispArgParser method to eliminate redundancy below?
     parser.add_argument("--lf", nargs="?", const=Option.GET, type=float)
     parser.add_argument("--esc", nargs="?", const=Option.GET, type=bool)
+    parser.add_argument("--ans", nargs="?",  const=Option.GET, type=float)
+    parser.add_argument("--rt", nargs="?",  const=Option.GET, type=float)
+    parser.add_argument("--bll", nargs="?",  const=Option.GET, type=float)
     parser.add_argument("--hdm-v", nargs="?",  const=Option.GET, type=bool)
     parser.add_argument("--hdm-k", nargs="?", const=Option.GET, type=int)
     parser.add_argument("--pull-slots", nargs="?", const=Option.GET, type=bool)
@@ -1132,6 +1153,12 @@ def params (name, argsl):
                             module.lf = args.lf
                         case "esc":
                             module.esc = args.esc
+                        case "ans":
+                            module.ans = args.ans
+                        case "rt":
+                            module.rt = args.rt
+                        case "bll":
+                            module.bll = args.bll
                         case "hdm_v":
                             module.verbose = args.hdm_v
                         case "hdm_k":
@@ -1171,7 +1198,9 @@ def params (name, argsl):
                     module.lock.release()
                     return
     # whether set/get case, return parameter value(s)
-    pars = {"lf": module.lf, "esc": module.esc, "hdm_v": module.verbose,
+    pars = {"lf": module.lf, "esc": module.esc, 
+            "ans": module.ans, "rt": module.rt, "bll": module.bll,
+            "hdm_v": module.verbose,
             "hdm_k": module.N, "pull_slots": module.pull_slots,
             "time_scale": module.time_scale, 
             "slot_pulling_threshold": module.slot_pulling_threshold,
@@ -1238,6 +1267,13 @@ actr.define_module('declarative', # module name
                              ['default-value',1.0],['warning','non-negative number'],
                              ['documentation','Latency Factor (from Python)']]],
                     [':esc',[['owner',False]]],
+                    [':ans',[['owner',True], ['default-value', 0.0], 
+                                ['documentation', ":ans from act-r test addd"]]],
+                    [':rt',[['owner',True], ['default-value', 0.0], 
+                                ['documentation', ":rt from act-r test addd"]]],
+                    [':bll',[['owner',True], ['default-value', 0.0], 
+                                ['documentation', ":bll from act-r test addd"]]],
+
                     [':hdm-v', [['owner',True], ['default-value', False], 
                                 ['documentation', "HDM Output Verbosity"]]],
                     [':hdm-k', [['owner', True], ['default-value', 512],
@@ -1653,4 +1689,3 @@ class Finst:
     # self.parent.sch.add(self.remove,args=[o],delay=self.time)
   def remove(self,o):
     if o in self.obj: self.obj.remove(o)
-

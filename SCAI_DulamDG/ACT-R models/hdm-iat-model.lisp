@@ -31,7 +31,6 @@
 (install-device '("motor" "keyboard"))
 (start-hand-at-keypad)
 
-
 (p start-state "start state for every new model run"
     =goal>
       isa      goal
@@ -308,5 +307,4 @@
 
 
 (goal-focus goalm)
-
 )
